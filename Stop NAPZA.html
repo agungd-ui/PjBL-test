@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stop NAPZA</title>
+<style>
+:root{
+  --bg1:#dbe8ff;--bg2:#f3d9ff;--bg3:#d6fff0;
+  --glass:rgba(255,255,255,.42);--glass2:rgba(255,255,255,.62);
+  --stroke:rgba(255,255,255,.75);--shadow:rgba(60,70,120,.18);
+  --text:#14161f;--muted:#4b5163;--accent:#0a84ff;--ok:#1fa855;--bad:#e5362c;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg1:#0b1530;--bg2:#2a1245;--bg3:#07302b;--glass:rgba(255,255,255,.09);--glass2:rgba(255,255,255,.16);
+  --stroke:rgba(255,255,255,.22);--shadow:rgba(0,0,0,.45);--text:#f2f4fa;--muted:#aab1c5;--accent:#4aa3ff;--ok:#43d27c;--bad:#ff6b61}}
+:root[data-theme="dark"]{
+  --bg1:#0b1530;--bg2:#2a1245;--bg3:#07302b;--glass:rgba(255,255,255,.09);--glass2:rgba(255,255,255,.16);
+  --stroke:rgba(255,255,255,.22);--shadow:rgba(0,0,0,.45);--text:#f2f4fa;--muted:#aab1c5;--accent:#4aa3ff;--ok:#43d27c;--bad:#ff6b61}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3));background-attachment:fixed;-webkit-font-smoothing:antialiased}
+.blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.7;z-index:0;pointer-events:none}
+.b1{width:300px;height:300px;background:#4f9bff;top:-60px;left:-80px}
+.b2{width:340px;height:340px;background:#ff6fd8;top:40%;right:-120px;opacity:.5}
+.b3{width:280px;height:280px;background:#35e0b2;bottom:-80px;left:10%;opacity:.5}
+main{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:12px 16px 110px}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%);
+  border:1px solid var(--stroke);border-radius:28px;box-shadow:0 10px 34px var(--shadow),inset 0 1px 0 rgba(255,255,255,.5);padding:22px;margin:0 0 16px}
+h1{margin:0 0 8px;font-size:32px;line-height:1.15}
+h2{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h3{margin:0 0 12px;font-size:20px;line-height:1.3}
+p{margin:0 0 10px;line-height:1.55;font-size:15.5px}
+.muted{color:var(--muted);font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{display:inline-block;border:0;border-radius:999px;padding:13px 22px;font-weight:600;background:var(--accent);color:#fff;margin:6px 8px 0 0}
+.btn.alt{background:var(--glass2);color:var(--text);border:1px solid var(--stroke)}
+.grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.tile{background:var(--glass2);border:1px solid var(--stroke);border-radius:22px;padding:16px;text-align:left}
+.tile b{display:block;font-size:26px;margin-bottom:4px}
+.opt{display:block;width:100%;text-align:left;background:var(--glass2);border:1px solid var(--stroke);border-radius:18px;padding:14px 16px;margin:0 0 10px;font-size:15.5px;line-height:1.4}
+.opt.ok{border-color:var(--ok);background:rgba(31,168,85,.22)}
+.opt.no{border-color:var(--bad);background:rgba(229,54,44,.2)}
+.bar{height:8px;border-radius:99px;background:var(--glass2);overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.top{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:8px}
+.exp{margin:6px 0 4px;padding:12px 14px;border-radius:16px;background:var(--glass2);font-size:14.5px;line-height:1.5}
+.big{font-size:54px;font-weight:700;margin:4px 0}
+input{font:inherit;color:var(--text);background:var(--glass2);border:1px solid var(--stroke);border-radius:999px;padding:12px 18px;width:100%;max-width:260px;margin:6px 0}
+.scenario{font-size:20px;text-align:center;padding:26px 10px;line-height:1.4;min-height:130px;display:flex;align-items:center;justify-content:center}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two .btn{margin:0;width:100%;padding:16px}
+.no-b{background:var(--bad)}.ok-b{background:var(--ok)}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;border-radius:999px;border:1px solid var(--stroke);background:var(--glass2);padding:10px}
+.tabs button.on{background:var(--accent);color:#fff}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:360px}
+th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px}
+td{padding:11px 8px;border-top:1px solid var(--stroke)}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;gap:2px;padding:6px;border-radius:999px;
+  background:var(--glass);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--stroke);box-shadow:0 10px 30px var(--shadow);max-width:calc(100% - 24px)}
+nav button{border:0;background:transparent;border-radius:999px;padding:10px 14px;font-size:13px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:19px}
+nav button.on{background:var(--glass2)}
+[hidden]{display:none!important}
+html:root:not([data-theme="zz"]){
+  color-scheme:dark;
+  --bg1:#000;--bg2:#000;--bg3:#000;
+  --glass:rgba(28,28,30,.55);--glass2:rgba(255,255,255,.10);
+  --stroke:rgba(255,255,255,.14);--shadow:rgba(0,0,0,.6);
+  --text:#fff;--muted:#98989f;--accent:#0a84ff;--ok:#30d158;--bad:#ff453a;
+}
+body{background:#000}
+.blob{opacity:.22;filter:blur(80px)}
+.b1{background:#0a84ff}.b2{background:#bf5af2;opacity:.16}.b3{background:#30d158;opacity:.12}
+.glass{box-shadow:0 12px 40px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.12)}
+nav{background:rgba(28,28,30,.6);box-shadow:0 12px 36px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.12)}
+nav button.on{background:rgba(255,255,255,.16)}
+.opt.ok{background:rgba(48,209,88,.22)}
+.opt.no{background:rgba(255,69,58,.22)}
+html:root:not([data-theme="zz"]){--accent:#fff;--ok:#fff;--bad:rgba(255,255,255,.4);--muted:#8e8e93;--glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.11);--stroke:rgba(255,255,255,.18)}
+.blob{display:none}
+h2{color:#8e8e93}
+.btn{background:#fff;color:#000}
+.btn.alt{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.no-b{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.ok-b{background:#fff;color:#000}
+.bar i{background:#fff}
+.tabs button.on{background:#fff;color:#000}
+.opt.ok{background:#fff;color:#000;border-color:#fff}
+.opt.no{background:transparent;color:#8e8e93;border-style:dashed;text-decoration:line-through}
+nav button.on{background:rgba(255,255,255,.18)}
+.tile b,nav button span{filter:grayscale(1) contrast(1.2)}
+
+main{padding:16px 16px 24px}
+.tn{position:sticky;top:calc(8px + env(safe-area-inset-top,0px));z-index:6;margin:8px auto 0;max-width:680px;width:calc(100% - 32px);display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;padding:8px 10px 8px 18px;border-radius:999px}
+.tn b{font-size:14px;letter-spacing:.08em}
+#lk{display:flex;gap:2px}
+#lk button{border:0;background:transparent;border-radius:999px;padding:8px 12px;font-size:13.5px;font-weight:600}
+#lk button.on{background:rgba(255,255,255,.18)}
+footer.glass{max-width:680px;width:calc(100% - 32px);margin:0 auto 20px;text-align:center;border-radius:20px;padding:14px;font-size:13px;color:var(--muted)}
+.hero{text-align:center;padding:40px 20px;background:radial-gradient(120% 140% at 50% 0,rgba(255,255,255,.14),transparent 60%),var(--glass)}
+.split{display:flex;gap:16px;align-items:center}
+.img{flex:0 0 92px;height:92px;border-radius:24px;background:var(--glass2);border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center;font-size:42px;filter:grayscale(1)}
+.qtabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.qtabs button{border:1px solid var(--stroke);background:var(--glass2);border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px}
+.qtabs button.on{background:#fff;color:#000}
+.cq{display:block;width:100%;text-align:center;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:22px;border-radius:22px;border:1px solid var(--stroke);background:var(--glass);-webkit-backdrop-filter:blur(28px);backdrop-filter:blur(28px);margin-bottom:16px}
+.slw{display:flex;align-items:center;gap:8px}
+.slw>button{flex:0 0 38px;height:38px;border-radius:50%;border:1px solid var(--stroke);background:var(--glass2);font-size:18px}
+.sl{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;flex:1;scrollbar-width:none;touch-action:pan-x pan-y}
+.sl::-webkit-scrollbar{display:none}
+.card{position:relative;flex:0 0 72%;max-width:220px;aspect-ratio:1;scroll-snap-align:start;border-radius:24px;border:1px solid var(--stroke);background:var(--glass2);display:flex;align-items:center;justify-content:center;font-size:60px;overflow:hidden;filter:grayscale(1)}
+.card .nm{position:absolute;left:0;right:0;bottom:0;padding:14px 10px 10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.85));opacity:0;transition:opacity .2s}
+.card:hover .nm{opacity:1}
+@media (hover:none){.card .nm{opacity:1}}
+#sw{position:relative}
+#fsb{position:absolute;top:10px;right:10px;z-index:2;width:38px;height:38px;border-radius:50%;border:1px solid var(--stroke);background:var(--glass2);font-size:16px}
+.stage{min-height:360px;border-radius:24px;border:1px solid var(--stroke);background:rgba(0,0,0,.35);padding:56px 20px 22px;display:flex;flex-direction:column;justify-content:center;overflow:auto}
+.stage h3{text-align:center}
+#sw.fs,#sw:fullscreen{position:fixed;inset:0;z-index:50;background:#000;display:flex;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))}
+#sw.fs .stage,#sw:fullscreen .stage{flex:1;max-width:760px;margin:auto;border:0;background:transparent;max-height:100%}
+#sw.fs #fsb{top:calc(10px + env(safe-area-inset-top,0px))}
+body.fsm .tn{display:none}
+.hearts{letter-spacing:4px;font-size:16px}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14.5px}
+dt{color:var(--muted)}dd{margin:0}
+.cap{max-width:320px;width:100%;margin:auto;border:1px solid var(--stroke);border-radius:18px;padding:16px;background:var(--glass2)}
+.cb{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid var(--stroke);width:100%;text-align:left;font-size:15px}
+.cb i{width:24px;height:24px;border-radius:6px;border:2px solid #fff;flex:none;text-align:center;line-height:20px;font-style:normal}
+.gr{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.gr button{aspect-ratio:1;border-radius:12px;border:2px solid transparent;background:rgba(255,255,255,.1);font-size:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;filter:grayscale(1);padding:2px}
+.gr button small{font-size:10px;color:#fff;line-height:1.1}
+.gr button.sel{border-color:#fff;background:rgba(255,255,255,.28)}
+.me td{background:rgba(255,255,255,.12);font-weight:600}
+@property --x{syntax:'<length>';inherits:true;initial-value:0px}
+.tn{display:none}
+.brand{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 0;font-weight:700;letter-spacing:.1em;font-size:14px}
+footer.glass{margin:0 auto 112px}
+.ln{--x:0px;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;width:min(92vw,420px);height:68px;display:flex;transition:--x .55s cubic-bezier(.34,1.3,.5,1)}
+.ln::before{content:"";position:absolute;inset:0;border-radius:24px;background:rgba(28,28,30,.6);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,.16);box-shadow:0 14px 40px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.14);-webkit-mask:radial-gradient(circle 37px at var(--x) 4px,transparent 97%,#000 100%);mask:radial-gradient(circle 37px at var(--x) 4px,transparent 97%,#000 100%)}
+.orb{position:absolute;top:-24px;left:calc(var(--x) - 29px);width:58px;height:58px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.55);z-index:2;pointer-events:none}
+.orb.mv{animation:sq .55s}
+@keyframes sq{0%{transform:scale(1)}40%{transform:scale(.72)}100%{transform:scale(1)}}
+.ln button{position:relative;z-index:3;flex:1;background:none;border:0;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
+.ln button i{display:flex;transition:opacity .2s}
+.ln button svg{width:24px;height:24px}
+.ln button em{position:absolute;bottom:8px;font-style:normal;font-size:11px;font-weight:600;opacity:0;transition:opacity .3s}
+.ln button.on i{opacity:0}
+.ln button.on em{opacity:1}
+body.fsm .ln{display:none}
+.ln{height:74px}
+.ln::before{-webkit-mask:radial-gradient(circle 41px at var(--x) 3px,transparent 97%,#000 100%);mask:radial-gradient(circle 41px at var(--x) 3px,transparent 97%,#000 100%)}
+.orb{top:-26px;left:calc(var(--x) - 31px);width:62px;height:62px;box-shadow:0 5px 0 rgba(160,160,168,.55),0 10px 24px rgba(0,0,0,.55)}
+.ln button i{opacity:1;transform:none;transition:opacity .3s .15s,transform .45s .1s cubic-bezier(.34,1.3,.5,1)}
+.ln button.on i{opacity:0;transform:translateY(-18px);transition:opacity .12s,transform .12s}
+.ln button em{bottom:13px;opacity:0;transform:translateY(14px);transition:opacity .15s,transform .15s}
+.ln button.on em{opacity:1;transform:none;transition:opacity .35s .18s,transform .45s .18s cubic-bezier(.34,1.5,.5,1)}
+.w5{gap:0}
+.ws{flex:0 0 100%;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 8px}
+.ws .img{margin-bottom:12px}
+.ws h3{margin:0 0 8px}
+.ws p{margin:0;min-height:96px}
+.dots{display:flex;justify-content:center;gap:7px;margin-top:12px}
+.dots i{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.3);transition:all .3s}
+.dots i.on{width:22px;background:#fff}
+.w5v{overflow:hidden;border-radius:18px}
+#lt{display:grid;grid-template-columns:1fr 1fr}
+.bv{overflow:hidden;border-radius:18px;transition:height .55s cubic-bezier(.4,0,.2,1)}
+.bt{position:relative;display:grid;grid-template-columns:100% 100%;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.bp{min-width:0;align-self:start;overflow-x:auto}
+.bt{transition:transform .55s cubic-bezier(.4,0,.2,1),filter .3s ease}
+.bt.mvg{filter:blur(7px)}
+.w5t{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.ws{flex:0 0 100%;flex-direction:row;align-items:center;text-align:left;gap:16px;padding:0}
+.ws .img{margin:0}
+.ws p{min-height:0}
+</style>
+</head>
+<body>
+<header class="brand">🛡️ STOP NAPZA</header>
+<main>
+<section class="view" id="home">
+ <div class="glass hero"><h2>Edukasi Interaktif</h2><h1>Kenali bahaya NAPZA,<br>jauhi sejak dini.</h1><p class="muted">Belajar lewat minigame dan kuis yang seru.</p><button class="btn" data-v="mg">Main Minigame</button></div>
+ <div class="glass"><h2>What is NAPZA</h2><div class="split"><div class="img">🧪</div><div><p>NAPZA adalah singkatan dari Narkotika, Psikotropika, dan Zat Adiktif lainnya: zat yang memengaruhi kerja otak dan dapat menimbulkan ketergantungan.</p><p class="muted">Penyalahgunaannya merusak kesehatan, belajar, dan masa depan.</p></div></div></div>
+ <div class="glass"><h2>Others · 5W1H NAPZA</h2><div class="qtabs" id="wt"></div><div class="w5v"><div class="w5t" id="w5"></div></div></div>
+</section>
+<section class="view" id="mg" hidden>
+ <div class="glass hero"><h2>Minigames</h2><h1>Main sambil belajar</h1></div>
+ <button class="cq" data-k="cq">Challenging Quiz</button>
+ <div class="glass"><h2>Others</h2><div class="slw"><button id="pl">‹</button><div class="sl" id="sl"></div><button id="pr">›</button></div><p class="muted" style="margin:10px 0 0">Geser atau tekan panah. Arahkan kursor ke gambar untuk melihat nama.</p></div>
+</section>
+<section class="view" id="play" hidden>
+ <button class="btn alt" data-v="mg" style="margin:0 0 12px">← Minigames</button>
+ <div id="sw"><button id="fsb" aria-label="Fullscreen">⛶</button><div class="stage" id="stage"></div></div>
+ <div class="glass" id="desc" style="margin-top:16px"></div>
+</section>
+<section class="view" id="board" hidden>
+ <div class="glass"><h2>Leaderboard</h2><div class="qtabs" id="lt"></div><div class="bv" id="bv"><div class="bt" id="lb"></div></div><p class="muted" style="margin-top:12px">Urut skor tertinggi, lalu waktu tercepat. Tersimpan di perangkat ini.</p></div>
+</section>
+</main>
+<footer class="glass">© 2026 Stop NAPZA · Proyek PjBL</footer>
+<nav class="ln" id="ln" aria-label="Menu"></nav>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sec=ms=>(ms/1000).toFixed(1)+" dtk";
+function load(k){try{return JSON.parse(localStorage.getItem(k))||[]}catch(e){return[]}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+const Q=[
+ {q:"NAPZA adalah singkatan dari...",o:["Narkotika, Psikotropika, dan Zat Adiktif lainnya","Narkoba, Pil, Zat Alami","Nikotin, Alkohol, Pil, Zat Adiktif","Narkotika, Pestisida, dan Zat Aditif"],a:0,e:"NAPZA = Narkotika, Psikotropika, dan Zat Adiktif lainnya."},
+ {q:"Temanmu menawarkan pil yang katanya bikin tenang. Sikap terbaik?",o:["Mencoba sedikit saja","Menolak tegas dan menjauh","Menerima tapi tidak dipakai","Menyimpannya dulu"],a:1,e:"Menolak dengan tegas dan menjauh adalah langkah paling aman. Kamu boleh bilang tidak."},
+ {q:"Penyalahgunaan narkoba paling berdampak pada...",o:["Hanya berat badan","Fungsi otak, konsentrasi, dan emosi","Hanya warna kulit","Tidak ada dampak jika jarang"],a:1,e:"Narkoba mengganggu kerja otak sehingga konsentrasi, memori, dan emosi terpengaruh."},
+ {q:"Ketergantungan narkoba bisa berupa...",o:["Fisik saja","Psikis saja","Fisik dan psikis","Tidak mungkin terjadi"],a:2,e:"Pengguna bisa mengalami ketergantungan fisik maupun psikis, sehingga sulit berhenti sendiri."},
+ {q:"Cara sehat mengatasi stres adalah...",o:["Mencoba zat terlarang","Berolahraga atau bercerita pada orang tepercaya","Menyendiri terus-menerus","Menghindari semua orang"],a:1,e:"Olahraga, hobi, dan bercerita ke orang tepercaya membantu mengelola stres dengan sehat."},
+ {q:"Rokok dan alkohol termasuk...",o:["Zat adiktif","Vitamin","Makanan sehat","Obat wajib"],a:0,e:"Rokok (nikotin) dan alkohol termasuk zat adiktif yang menimbulkan kecanduan."},
+ {q:"Jika temanmu terjerat narkoba, yang sebaiknya kamu lakukan...",o:["Ikut-ikutan agar setia kawan","Menjauhinya tanpa peduli","Mengajak bicara dan membantu mencari bantuan orang dewasa atau konselor","Menyebarkan ceritanya"],a:2,e:"Dukung temanmu dan libatkan orang dewasa tepercaya, guru, konselor, atau lembaga rehabilitasi seperti BNN."},
+ {q:"Pecandu narkoba yang ingin pulih sebaiknya...",o:["Berhenti sendirian tanpa bantuan","Menjalani rehabilitasi dengan pendampingan profesional","Menunggu sampai sembuh sendiri","Mengganti dengan zat lain"],a:1,e:"Pemulihan paling baik dengan rehabilitasi dan pendampingan profesional."}
+];
+const G=[
+ ["Teman mengajak mencoba pil yang tidak jelas asalnya","tolak"],
+ ["Ikut ekskul olahraga sepulang sekolah","ambil"],
+ ["Kakak kelas menawarkan rokok elektrik agar dianggap keren","tolak"],
+ ["Bercerita ke guru BK saat sedang stres","ambil"],
+ ["Seseorang menyuruhmu menyimpan paket misterius","tolak"],
+ ["Mengikuti penyuluhan bahaya narkoba di sekolah","ambil"],
+ ["Diajak ke pesta yang katanya ada minuman dan pil terlarang","tolak"],
+ ["Mengisi waktu luang dengan hobi musik atau seni","ambil"],
+ ["Teman bilang, coba sekali saja, tidak akan kecanduan","tolak"],
+ ["Mengajak teman yang bermasalah bicara dengan orang tua","ambil"]
+];
+const INTRO={q:"Pilih ‘Mulai’",o:["Start","Ayo","Gas!","Dih, nyuruh"],ok:[0,1,2],e:"Semua artinya sama: mulai! Kecuali yang menolak."};
+const C=[
+ {p:"Pilih semua kotak yang MENJAUHKANMU dari NAPZA",e:"Olahraga, hobi positif, dan belajar melindungimu.",t:[["🏃","Olahraga",1],["💊","Pil asing",0],["🎸","Musik",1],["🚬","Rokok",0],["📚","Belajar",1],["🍺","Alkohol",0],["⚽","Futsal",1],["💉","Suntik gelap",0],["🎨","Seni",1]]},
+ {p:"Pilih semua yang termasuk ZAT ADIKTIF berbahaya",e:"Rokok, alkohol, dan obat terlarang bersifat adiktif.",t:[["🚬","Rokok",1],["🥦","Sayur",0],["🍺","Alkohol",1],["🏀","Basket",0],["💊","Pil terlarang",1],["🍎","Apel",0],["🎧","Musik",0],["💉","Narkoba suntik",1],["📖","Buku",0]]},
+ {p:"Pilih semua yang AMAN untuk dimintai bantuan",e:"Keluarga, guru, konselor, dan layanan kesehatan siap membantu.",t:[["👨‍👩‍👧","Keluarga",1],["🌃","Ajakan pesta",0],["🧑‍🏫","Guru BK",1],["🕶️","Orang asing",0],["🏥","Faskes",1],["💊","Pengedar",0],["🩺","Konselor",1],["🎲","Coba-coba",0],["🤝","Sahabat tepercaya",1]]}];
+const W={What:["❓","Narkotika, Psikotropika, dan Zat Adiktif lainnya: zat yang memengaruhi kerja otak dan bisa menimbulkan ketergantungan."],Who:["👥","Siapa saja bisa terjerat, terutama remaja yang mudah terbawa pergaulan. Yang bisa membantu: keluarga, guru, konselor, dan BNN."],When:["⏰","Risiko muncul saat ada tekanan teman, stres, atau rasa penasaran. Makin dini dicegah, makin aman."],Where:["📍","Ajakan bisa datang di lingkungan sekitar, pergaulan, bahkan dunia maya. Bantuan ada di fasilitas kesehatan dan lembaga rehabilitasi resmi."],Why:["💡","Karena NAPZA merusak otak dan kesehatan, mengganggu prestasi dan hubungan sosial, serta melanggar hukum."],How:["🛠️","Berani menolak, pilih lingkungan positif, kelola stres dengan sehat, dan segera cari bantuan orang dewasa tepercaya."]};
+const GAMES={
+ cq:{n:'Challenging Quiz',i:'🧩',t:'Jawab benar untuk naik level. Salah = kehilangan ♥. Nyawa habis, mulai lagi dari Level 1.',r:'Kuis level dan nyawa ala game arcade',run:()=>quiz('cq')},
+ cap:{n:'CAPTDUN',i:'🤖',t:'Completely Automated Public Test to tell Drug User or Not. Lolos 3 ronde verifikasi!',r:'CAPTCHA / reCAPTCHA',run:cap},
+ tab:{n:'Tolak atau Ambil',i:'🙅',t:'Tolak ajakan buruk, ambil kegiatan positif. 10 ronde cepat.',r:'Game keputusan cepat',run:tab},
+ fast:{n:'Kuis Cepat',i:'⚡',t:'8 soal acak tentang bahaya NAPZA, lengkap dengan penjelasan.',r:'Materi umum edukasi NAPZA',run:()=>quiz('fast')}};
+let LK='cq';const ME={};
+function mv(an){
+  const bt=$('#lb'),bv=$('#bv'),i=Object.keys(GAMES).indexOf(LK),p=bt.children[i];if(!p)return;
+  bt.style.transition=bv.style.transition=an?'':'none';
+  bt.style.transform=`translate(-${(i%2)*100}%,-${p.offsetTop}px)`;
+  bv.style.height=p.offsetHeight+'px';
+  if(an){bt.classList.add('mvg');clearTimeout(mv.t);mv.t=setTimeout(()=>bt.classList.remove('mvg'),380)}
+}
+
+function show(v){
+  if($('#sw').classList.contains('fs'))fs();
+  $$('.view').forEach(e=>e.hidden=e.id!==v);
+  lnav(v==='play'?'mg':v);
+  if(v==='board')board();
+  scrollTo(0,0);
+}
+function fs(){
+  const w=$('#sw'),on=!w.classList.contains('fs');
+  w.classList.toggle('fs',on);document.body.classList.toggle('fsm',on);$('#fsb').textContent=on?'✕':'⛶';
+  try{if(on&&w.requestFullscreen)w.requestFullscreen().catch(()=>{});if(!on&&document.fullscreenElement)document.exitFullscreen()}catch(e){}
+}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&$('#sw').classList.contains('fs'))fs()});
+function openG(k){
+  const g=GAMES[k];show('play');
+  $('#stage').innerHTML=`<div style="text-align:center"><div style="font-size:56px;filter:grayscale(1)">${g.i}</div><h3>${g.n}</h3><p class="muted">${g.t}</p><button class="btn" id="go">Mulai</button></div>`;
+  $('#go').onclick=g.run;
+  $('#desc').innerHTML=`<h2>Deskripsi minigame</h2><h3 style="margin-bottom:10px">${g.n}</h3><dl><dt>Dibuat</dt><dd>November 2026</dd><dt>Referensi</dt><dd>${g.r}</dd><dt>Developer</dt><dd>Tim PjBL</dd></dl>`;
+}
+function finish(k,s,m,ms,ex){
+  $('#stage').innerHTML=`<div style="text-align:center"><h2>Selesai</h2><div class="big">${s}/${m}</div><p class="muted">Waktu ${sec(ms)}${ex?' · '+ex:''}</p><input id="nm" maxlength="16" placeholder="Nama kamu"><br><button class="btn" id="sv">Simpan ke Leaderboard</button><button class="btn alt" id="ag">Main Lagi</button></div>`;
+  $('#ag').onclick=GAMES[k].run;
+  $('#sv').onclick=()=>{const e={n:($('#nm').value||'').trim()||'Anonim',s,m:ms},l=load('lb_'+k);l.push(e);save('lb_'+k,l);ME[k]=e;LK=k;show('board')};
+}
+
+function quiz(m){
+  const st=$('#stage'),lvl=m==='cq',t0=Date.now();let L,i,h,sc=0,tr=1;
+  const build=()=>{L=shuffle(Q);if(lvl)L=[INTRO,...L];i=0;h=3};build();
+  function r(){
+    const x=L[i],ok=x.ok||[x.a];
+    st.innerHTML=`<div class="top"><span>${lvl?'Level':'Soal'} ${i+1}/${L.length}</span>${lvl?`<span class="hearts">${'♥'.repeat(h)}${'♡'.repeat(3-h)}</span>`:''}</div><div class="bar"><i style="width:${i/L.length*100}%"></i></div><h3>${esc(x.q)}</h3><div id="op">${x.o.map((t,k)=>`<button class="opt" data-i="${k}">${esc(t)}</button>`).join('')}</div><div id="fb"></div>`;
+    $$('#op .opt').forEach(b=>b.onclick=()=>{
+      const k=+b.dataset.i,g=ok.includes(k),rev=g||!lvl;
+      $$('#op .opt').forEach(o=>{o.disabled=true;if(rev&&ok.includes(+o.dataset.i))o.classList.add('ok')});
+      if(g)sc++;else{b.classList.add('no');if(lvl)h--}
+      const dead=lvl&&h<1,lb=dead?'Nyawa habis, ulang dari Level 1':!g&&lvl?'Coba lagi':i+1<L.length?'Lanjut':'Selesai';
+      $('#fb').innerHTML=`<div class="exp">${g?'✓':'✗'} ${rev?esc(x.e):'Salah! Satu nyawa hilang.'}</div><button class="btn" id="nx">${lb}</button>`;
+      $('#nx').onclick=()=>{if(dead){tr++;build()}else if(g||!lvl)i++;i>=L.length?finish(m,lvl?L.length:sc,L.length,Date.now()-t0,lvl?tr+'x percobaan':''):r()};
+    });
+  }
+  r();
+}
+
+function cap(){
+  const st=$('#stage'),t0=Date.now();let ri=0;
+  function box(){
+    st.innerHTML=`<div class="cap"><button class="cb" id="cb"><i></i>I’m not a drug user</button><p class="muted" style="margin:10px 0 0;font-size:12px">CAPTDUN · Completely Automated Public Test to tell Drug User or Not</p></div>`;
+    $('#cb').onclick=()=>{$('#cb i').textContent='…';setTimeout(grid,700)};
+  }
+  function grid(){
+    const R=C[ri],sel=new Set();
+    st.innerHTML=`<div class="cap"><p style="margin:0;font-weight:600">Ronde ${ri+1}/${C.length}<br><span class="muted">${esc(R.p)}</span></p><div class="gr">${R.t.map((x,j)=>`<button data-j="${j}">${x[0]}<small>${esc(x[1])}</small></button>`).join('')}</div><button class="btn" id="sb" style="width:100%;margin:0">SUBMIT</button><div id="fb"></div></div>`;
+    $$('.gr button').forEach(b=>b.onclick=()=>{const j=+b.dataset.j;sel.has(j)?sel.delete(j):sel.add(j);b.classList.toggle('sel')});
+    $('#sb').onclick=()=>{
+      if(R.t.every((x,j)=>!!x[2]===sel.has(j))){ri++;ri>=C.length?finish('cap',C.length,C.length,Date.now()-t0):grid()}
+      else $('#fb').innerHTML=`<div class="exp">✗ Verifikasi gagal, coba lagi. ${esc(R.e)}</div>`;
+    };
+  }
+  box();
+}
+
+function tab(){
+  const st=$('#stage'),gs=shuffle(G),t0=Date.now();let gi=0,sc=0;
+  (function r(){
+    st.innerHTML=`<div class="top"><span>Ronde ${gi+1}/${gs.length}</span><span>Skor ${sc}</span></div><div class="bar"><i style="width:${gi/gs.length*100}%"></i></div><div class="scenario">${esc(gs[gi][0])}</div><div class="two"><button class="btn no-b" data-a="tolak">Tolak</button><button class="btn ok-b" data-a="ambil">Ambil</button></div><div id="fb"></div>`;
+    $$('.two .btn').forEach(b=>b.onclick=()=>{
+      $$('.two .btn').forEach(o=>o.disabled=true);const g=b.dataset.a===gs[gi][1];if(g)sc++;
+      $('#fb').innerHTML=`<div class="exp">${g?'✓ Tepat!':'✗ Kurang tepat.'} Jawaban benar: ${gs[gi][1]==='tolak'?'Tolak':'Ambil'}.</div>`;
+      setTimeout(()=>{gi++;gi<gs.length?r():finish('tab',sc,gs.length,Date.now()-t0)},1100);
+    });
+  })();
+}
+
+function board(){
+  $('#lt').innerHTML=Object.keys(GAMES).map(k=>`<button data-b="${k}"${k===LK?' class="on"':''}>${GAMES[k].n}</button>`).join('');
+  $$('#lt button').forEach(b=>b.onclick=()=>{LK=b.dataset.b;$$('#lt button').forEach(x=>x.classList.toggle('on',x===b));mv(true)});
+  const P=[],K0=LK;for(const K of Object.keys(GAMES)){LK=K;const l=load('lb_'+K).sort((a,b)=>b.s-a.s||a.m-b.m).slice(0,10),me=ME[K];
+  P.push(`<table><tr><th>No</th><th>Name</th><th>Skor</th><th>Time</th></tr>${l.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.n)}</td><td>${r.s}</td><td>${sec(r.m)}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Belum ada data. Mainkan dulu!</td></tr>'}${me?`<tr class="me"><td>~</td><td>${esc(me.n)} (kamu)</td><td>${me.s}</td><td>${sec(me.m)}</td></tr>`:''}</table>`);}LK=K0;$('#lb').innerHTML=P.map(t=>`<div class="bp">${t}</div>`).join('');mv(false);
+}
+
+const wk=Object.keys(W);
+$('#w5').innerHTML=wk.map(k=>`<div class="ws"><div class="img">${W[k][0]}</div><p>${W[k][1]}</p></div>`).join('');
+$('#wt').innerHTML=wk.map(k=>`<button data-w="${k}">${k}</button>`).join('');
+
+const go5=i=>{$('#w5').style.transform=`translateX(-${i*100}%)`;$$('#wt button').forEach((b,j)=>b.classList.toggle('on',j===i))};
+$$('#wt button').forEach((b,i)=>b.onclick=()=>go5(i));go5(0);
+$('#sl').innerHTML=['cap','tab','fast'].map(k=>`<button class="card" data-k="${k}">${GAMES[k].i}<span class="nm">${GAMES[k].n}</span></button>`).join('');
+$$('.card,.cq').forEach(b=>b.onclick=()=>openG(b.dataset.k));
+$('#pl').onclick=()=>$('#sl').scrollBy({left:-250,behavior:'smooth'});
+$('#pr').onclick=()=>$('#sl').scrollBy({left:250,behavior:'smooth'});
+$('#fsb').onclick=fs;
+const sv=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const ICON={home:sv('<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'),mg:sv('<rect x="2" y="6" width="20" height="12" rx="5"/><path d="M6 12h4M8 10v4M15 12h.01M18 11h.01"/>'),board:sv('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>')},LAB={home:'Home',mg:'Minigames',board:'Leaderboard'};
+let cur='home';
+$('#ln').innerHTML='<div class="orb" id="orb"></div>'+Object.keys(ICON).map(k=>`<button data-v="${k}" aria-label="${LAB[k]}"><i>${ICON[k]}</i><em>${LAB[k]}</em></button>`).join('');
+function lnav(v){
+  cur=v;const n=$('#ln'),b=n.querySelector(`[data-v="${v}"]`);if(!b)return;
+  n.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  n.style.setProperty('--x',(b.offsetLeft+b.offsetWidth/2)+'px');
+  const o=$('#orb');o.classList.remove('mv');void o.offsetWidth;o.classList.add('mv');o.innerHTML=ICON[v];
+}
+addEventListener('resize',()=>lnav(cur));
+$$('[data-v]').forEach(b=>b.onclick=()=>show(b.dataset.v));
+lnav('home');
+</script>
+</body>
+</html>
